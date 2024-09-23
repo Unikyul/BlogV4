@@ -40,27 +40,20 @@ public class BoardController {
     }
 
 
-    @PostMapping("/api/board/{id}/delete")
+    @DeleteMapping("/api/board/{id}")
     public String removeBoard(@PathVariable("id") Integer id, HttpServletRequest request) {
         User sessionUser = (User) session.getAttribute("sessionUser");
         boardService.게시글삭제하기(id, sessionUser);
         return "redirect:/";
     }
 
-
-    @GetMapping("/api/board/save-form")
-    public String saveForm() {
-        return "board/save-form";
-    }
-
-
-    @PostMapping("/api/board/save")
-    public String save(@Valid BoardRequest.SaveDTO saveDTO, Errors errors) {
+    @PostMapping("/api/board")
+    public ResponseEntity<?> save(@Valid @RequestBody BoardRequest.SaveDTO saveDTO, Errors errors) {
         User sessionUser = (User) session.getAttribute("sessionUser");
 
-        boardService.게시글쓰기(saveDTO, sessionUser);
+        BoardResponse.DTO model = boardService.게시글쓰기(saveDTO, sessionUser);
 
-        return "redirect:/";
+        return ResponseEntity.ok(Resp.ok(model));
     }
 
     @GetMapping("/api/board/{id}/update-form")
